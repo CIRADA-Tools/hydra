@@ -1,0 +1,172 @@
+modules:
+   - aegean:
+        name: Aegean
+        category: gaussian
+        plot_color: green
+        config: aegean/aegean.yml
+   - caesar:
+        name: Caesar
+        category: extended 
+        plot_color: pink
+        config: caesar/caesar.yml
+   - profound:
+        name: ProFound
+        category: extended
+        plot_color: red
+        config: profound/profound.yml
+   - pybdsf:
+        name: PyBDSF
+        category: gaussian
+        plot_color: orange
+        config: pybdsf/pybdsf.yml
+        required:
+            - frequency
+   - selavy:
+        name: Selavy
+        category: gaussian
+        plot_color: blue
+        config: selavy/selavy.yml
+graphics:
+   plot:
+      colors:
+         - aegean:   green
+         - caesar:   magenta
+         - profound: red
+         - pybdsf:   orange
+         - selavy:   blue
+      labels:
+         - aegean:   Aegean
+         - caesar:   Caesar
+         - profound: ProFound
+         - pybdsf:   PyBDSF
+         - selavy:   Selavy
+surveys:
+   atlas:
+      # TO-DO: Mosiac has not hook. We'll
+      # need a survey/telescope option
+      name: ATLAS
+      telescope: ATCA
+      beam:
+          bmaj: 3.02205863409E-03
+          bmin: 1.27487222198E-03
+          bpa: -5.51027916372E-02
+   emu:
+         name: EMU        # TO-DO: Can't hook on this in FITS.
+         telescope: ATCA  #        Can we hook on this?
+         freq: 9.434907407407E+08
+   vlass:
+         name: VLASS
+         freq: 2.987741489322E+09
+   emusimu4:
+         name: EMUSimu4
+         freq: 9.434907407407E+08
+   emusim2x2:
+         name: EMUSim2x2
+         freq: 9.434907407407E+08
+   emusim4x4:
+         name: EMUSim4x4
+         freq: 9.434907407407E+08
+common:
+   - ra:
+       units: deg
+       modules:
+           - aegean:
+           - caesar:
+           - profound:
+               header: ra_centre
+           - pybdsf:
+           - selavy:
+   - dec:
+       units: deg
+       modules:
+           - aegean:
+           - caesar:
+           - profound:
+               header: dec_centre
+           - pybdsf:
+           - selavy:
+   - extent_semimajor:
+       units: deg
+       modules:
+           - aegean:
+               header: semimajor
+               mult_by: 0.5 # Mod (re., cerberus.py::TODO [23])
+           - caesar:
+               header: bmaj_wcs 
+               mult_by: 0.5
+           - profound:
+               header: semimajor
+               mult_by: 0.5 # Mod (re., cerberus.py::TODO [24])
+           - pybdsf:
+               header: major
+               mult_by: 0.5
+           - selavy:
+               header: major
+               mult_by: 0.5
+   - extent_semiminor:
+       units: deg
+       modules:
+           - aegean:
+               header: semiminor
+               mult_by: 0.5 # Mod (re., cerberus.py::TODO [23])
+           - caesar:
+               header: bmin_wcs
+               mult_by: 0.5
+           - profound:
+               header: semiminor
+               mult_by: 0.5 # Mod (re., cerberus.py::TODO [24])
+           - pybdsf:
+               header: minor
+               mult_by: 0.5
+           - selavy:
+               header: minor
+               mult_by: 0.5
+   - extent_angle:
+       units: deg
+       modules:
+           - aegean:
+               header: pa
+           - caesar:
+               header: pa_wcs
+           - profound:
+               header: pa
+           - pybdsf:
+               header: pa
+           - selavy:
+               header: pa
+   - flux_peak:
+       units: mJy/beam
+       modules:
+           - aegean:
+           - caesar:
+           #- profound: # TO-DO: Add to catalogue
+           #    header: flux_peak
+           - pybdsf:
+           - selavy:
+   - flux_peak_err:
+       units: mJy/beam
+       use_if_nan: -1000.0
+       modules:
+           - aegean:
+           - caesar:
+           #- profound: # TO-DO: Add to catalogue
+           #    header: flux_peak_err
+           - pybdsf:
+           - selavy:
+   - flux_total:
+       units: mJy
+       modules:
+           - aegean:
+           - caesar:
+           - profound:
+           - pybdsf:
+           - selavy:
+   - flux_total_err:
+       units: mJy
+       use_if_nan: -1000.0
+       modules:
+           - aegean:
+           - caesar:
+           - profound:
+           - pybdsf:
+           - selavy:

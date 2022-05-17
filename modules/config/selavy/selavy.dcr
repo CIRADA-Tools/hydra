@@ -1,0 +1,31 @@
+##FROM csirocass/yandasoft:release
+#FROM csirocass/yandasoft:1.1-mpich
+FROM csirocass/askapsoft:1.1-mpich
+
+ENV LANG=C.UTF-8
+
+# install vi for dev work
+RUN set -x \
+   && apt-get update \
+   && apt-get install -y vim \
+   && apt-get install -y python3-pip \
+   && pip3 install click \
+   && pip3 install astropy \
+   && apt-get autoremove --purge -y python3-pip \
+   && rm -rf /var/lib/apt/lists/*
+
+# setup processing environment
+ARG home_dir
+ARG input_dir
+ARG processing_dir
+ARG output_dir
+ARG script
+RUN set -x \
+   && mkdir -p $home_dir \
+   && mkdir -p $input_dir \
+   && mkdir -p $processing_dir \
+   && mkdir -p $output_dir
+WORKDIR $home_dir
+COPY $script $home_dir
+
+ENTRYPOINT ["/usr/bin/python3","/home/selavy/selavy.py"]

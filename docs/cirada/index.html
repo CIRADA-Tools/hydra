@@ -1,0 +1,153 @@
+<!DOCTYPE>
+<html>
+    <head>
+        <link rel='stylesheet' href='hydra.css'>
+    </head>
+    <body>
+    <div class='hydra-main'>
+        <h1 class='hydra-title'>Hydra: An extensible multi-source-finder comparison and cataloguing tool, currently utilizing Aegean, Caesar, ProFound, PyBDSF, and Selavy.</h1>
+	<hr>
+	<h2>Overview</h2>
+	<hr>
+	<p>The following diagram shows the Hydra sofware workflow.</p>
+        
+	<p><div class='hydra-fg-pipeline'><img src="EMU_Pipeline.png" width=500px></div></p>
+        
+	<p>The Hydra software suite consists of the following commands.</p>
+
+        <p><div class='hydra-tb-generic'>
+            <table>
+                <tr><th>Tool</th><th>Command</th><th>Function</th></tr>
+                <tr><th>Homados</th><td>homados.py</td><td>Provides functionality for creating shallow images with n&sigma; noise (default, n=5), inverting images, and computing RMS, &mu;, <i>etc.</i> statistics.</td></tr>
+                <tr><th>Cerberus</th><td>cerberus.py</td><td>Alows the user to run Hydra's source finders collectively or individualy.</td></tr>
+                <tr><th>Typhon</th><td>typhon.py</td><td>Optimizes source-finder RMS and Island parameters to a standard baseline that can be used for comparison purposes. This tool uses Homados and Cerberus.</td></tr>
+                <tr><th>Hydra</th><td>hydra.py</td><td>The main tool which glues everthing together, by running Typhon for deep and shallow images, to produce various data products.</td></tr>
+            </table>
+	</div></p>
+        
+	<p>All commands have builtin help. The Homados, Cerberus, and Typhon command-line interfaces are ancillary tools used for diagnostic purposes. These tools also have library interfaces and are pipelined together, so as to be utilized by Hydra. Hydra is the main tool that glues everything together, by running Typhon for deep and shallow images, and producing the following data products:
+        <ul>
+            <li> Typhon Metrics
+            <ul>
+                <li> Deep/Shallow Diagnostic Plots of
+                <ul>
+                    <li> PRD
+                    <li> PRD CPU Times
+                    <li> Residual RMS
+                    <li> Residual MADFM
+                    <li> Residual &Sigma;I<sup>2</sup>
+                </ul>
+                <li> Table of deep and shallow optimized RMS and island parameters
+            </ul>
+            <li> Deep/Shallow Catalogues
+            <ul>
+                <li> Source finder Catalogues
+                <li> Cluster Catalogue
+                <li> Clump Catalogue
+            </ul>
+            <li> Optional Simulated Input Catalogue
+            <li> Deep/Shallow Cutouts
+            <ul>
+                <li> Un/annotated Images
+                <li> Un/annotated Residual Images
+            </ul>
+            <li> Diagnostic Plots
+            <ul>
+                <li> Clump Size Distributions
+                <li> Detections <i>vs.</i> S/N
+                <li> Completeness <i>vs.</i> S/N
+                <li> Reliability <i>vs.</i> S/N
+                <li> S<sub>out</sub>/S<sub>in</sub> <i>vs.</i> S/N
+                <li> False-Positive <i>vs.</i> S/N
+            </ul>
+            <li> wrt injected and deep sources
+            <li> Local Web-browser Tool
+        </ul>
+        <p>All of this information is stored in a tarball. With the exception of the source finder, simulated input, and clump catalogues, the local web-browser tool allows the user to explore all of these data products, and is accessible through an <tt class='hydra-tt'>index.html</tt> file in the main tarfile directory.</p>
+	<hr>
+	<h2>Software</h2>
+	<hr>
+
+	<p>The following is the help output of the Hydra tool.</p>
+<pre class='hydra-pre'>
+    $ python hydra.py --help
+    Usage: hydra.py [OPTIONS] FITS_FILE
+    
+      Performs deep-shallow analaysis.
+    
+    Options:
+      --catalogues-yml TEXT  YML file pointing to catalogoues to match.
+      --bypass-archived      Use FITS_FILE_PREFIX.hydra.tar.gz archive.
+      --use TEXT             Use FITS_FILE_PREFIX.typhon.tar.gz optimization.
+      --help                 Show this message and exit.
+    $
+</pre>
+	<p>The <tt class='hydra-tt'>--catalogues-yml</tt> option is for referencing a <tt class='hydra-tt'>&lt;catalogues&gt;.yml</tt> configuration file, which points to catalogues to merge with typhon's catalogue output. This is typically used for injecting simulated sources from a simulated image for completeness and reliability studies, <i>etc.</i> For example, the following Hydra command will process (in the background) a simulated 2x2 simulated FITS image (<tt class='hydra-tt'>emu_simulated_2x2.fits</tt>) and collate the results with the corresponding simulated catalogue (<tt class='hydra-tt'>art_src_list_2x2deg.fits</tt>), defined in the <tt class='hydra-tt'>art_src_list_2x2deg.yml</tt> configuration file (logging the results in <tt class='hydra-tt'>sim_2x2.log</tt>).</p>
+<pre class='hydra-pre'>
+    $ nohup python hydra.py data_path/emu_simulated_2x2.fits --catalogues-yml data_path/art_src_list_2x2deg.yml > sim_2x2.log 2>&1 & 
+</pre> 
+        <p>This will generate tarballs from Typhon, for deep (<tt class='hydra-tt'>emu_simulated_2x2.fits</tt>) and shallow (<tt class='hydra-tt'>emu_simulated_2x2.shallow.fits</tt>) images, and Hydra, which contains final results: <i>i.e.</i>,</p>
+<pre class='hydra-pre'>
+    $ ls -1 data_path/*.tar.gz
+    data_path/emu_simulated_2x2.hydra.tar.gz
+    data_path/emu_simulated_2x2.shallow.typhon.tar.gz
+    data_path/emu_simulated_2x2.typhon.tar.gz
+    $
+</pre> 
+        <p>Untarring <tt class='hydra-tt'>emu_simulated_2x2.hydra.tar.gz</tt> (<i>a la</i>, <tt class='hydra-tt'>tar xf emu_simulated_2x2.hydra.tar.gz</tt>), reveals an <tt class='hydra-tt'>index.html</tt> in the top directory of <tt class='hydra-tt'>emu_simulated_2x2.hydra_dir</tt> (created after untarring), from which one can navigate to launch the Hydra Viewer.</p>
+        
+	<p>Running the Hydra command will simply load the <tt class='hydra-tt'>emu_simulated_2x2.hydra.tar.gz</tt> again, if it already exists; otherwiser, it will rebuild it from the Typhon tarballs (failing that, it'll redo the whole run). The <tt class='hydra-tt'>--bypass-archived</tt> forces Hydra to reprocesses the Typhon tarballs. This is intended for software development purposes, and future development.</p>
+        
+	<p>Finally, the <tt class='hydra-tt'>--use</tt> option is for running Hydra on an image using the Typhon optimiztion results of a reference image. For example, the following command processing the VLASS image <tt class='hydra-tt'>vlass_qle1_t12t18_2x2deg_sample.fit</tt> using the optimization results of the <tt class='hydra-tt'>emu_simulated_2x2.fits</tt> simulated (which will use using its Typhon tarball results, or generated them).</p>
+<pre class='hydra-pre'>
+    nohup python hydra.py data_path/vlass_qle1_t12t18_2x2deg_sample.fits --use data_path/emu_simulated_2x2.fits > vlass.log 2>&1 &
+</pre> 
+
+	<p>The software, along with further details, can be found in the <a href="https://gitlab.com/rubiculite/emu_tng_source_finder">Hydra repo</a>.</p>
+
+	<hr>
+	<h2>Further Details</h2>
+	<hr>
+	<p>More comprehensive details can be found in the <a href="hydra_paper.pdf" target=_blank>Hydra paper (Boyce <i>et al</i>, 2021)</a>. The following table contains links to the accompanying data.</p>
+
+        <p><div class='hydra-tb-generic hydra-tb-paper'>
+            <table>
+                <tr><th>2&deg;x2&deg; Image Data</th><th>Directory</th><th>Contents</th></tr>
+                <tr>
+                    <th align='left'>Simulated Point Sources</th>
+                    <td><a href="https://www.canfar.net/storage/vault/list/cirada/continuum/mboyce/hydra_paper/sim_2x2" target=_blank>sim_2x2</a></td>
+                    <td valign='middle'>
+                        <ul>
+                            <li><a href="https://www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/files/vault/cirada/continuum/mboyce/hydra_paper/sim_2x2/emu_simulated_2x2.fits" download="emu_simulated_2x2.fits">emu_simulated_2x2.fits</a></li>
+                            <li><a href="https://www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/files/vault/cirada/continuum/mboyce/hydra_paper/sim_2x2/emu_simulated_2x2.shallow.fits" download="emu_simulated_2x2.shallow.fits">emu_simulated_2x2.shallow.fits</a></li>
+                            <li><a href="https://www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/files/vault/cirada/continuum/mboyce/hydra_paper/sim_2x2/emu_simulated_2x2.hydra.tar.gz" download="emu_simulated_2x2.hydra.tar.gz">emu_simulated_2x2.hydra.tar.gz</a></li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <th align='left'>Simulated Point and<br/> Extended Sources</th>
+                    <td><a href="https://www.canfar.net/storage/vault/list/cirada/continuum/mboyce/hydra_paper/ext_2x2" target=_blank>ext_2x2</a></td>
+                    <td valign='middle'>
+                        <ul>
+                            <li><a href="https://www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/files/vault/cirada/continuum/mboyce/hydra_paper/ext_2x2/emu_simulated_ext2x2.fits" download="emu_simulated_ext2x2.fits">emu_simulated_ext2x2.fits</a></li>
+                            <li><a href="https://www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/files/vault/cirada/continuum/mboyce/hydra_paper/ext_2x2/emu_simulated_ext2x2.shallow.fits" download="emu_simulated_ext2x2.shallow.fits">emu_simulated_ext2x2.shallow.fits</a></li>
+                            <li><a href="https://www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/files/vault/cirada/continuum/mboyce/hydra_paper/ext_2x2/emu_simulated_ext2x2.hydra.tar.gz" download="emu_simulated_ext2x2.hydra.tar.gz">emu_simulated_ext2x2.hydra.tar.gz</a></li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <th align='left'>EMU Pilot Sample</th>
+                    <td><a href="https://www.canfar.net/storage/vault/list/cirada/continuum/mboyce/hydra_paper/emu_2x2" target=_blank>emu_2x2</a></td>
+                    <td valign='middle'>
+                        <ul>
+                            <li><a href="https://www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/files/vault/cirada/continuum/mboyce/hydra_paper/emu_2x2/emu_pilot_sample_2x2deg.fits" download="emu_pilot_sample_2x2deg.fits">emu_pilot_sample_2x2deg.fits</a></li>
+                            <li><a href="https://www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/files/vault/cirada/continuum/mboyce/hydra_paper/emu_2x2/emu_pilot_sample_2x2deg.shallow.fits" download="emu_pilot_sample_2x2deg.shallow.fits">emu_pilot_sample_2x2deg.shallow.fits</a></li>
+                            <li><a href="https://www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/files/vault/cirada/continuum/mboyce/hydra_paper/emu_2x2/emu_pilot_sample_2x2deg.hydra.tar.gz" download="emu_pilot_sample_2x2deg.hydra.tar.gz">emu_pilot_sample_2x2deg.hydra.tar.gz</a></li>
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+	</div></p>
+    </div>
+    </body>
+</html>

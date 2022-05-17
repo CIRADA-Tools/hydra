@@ -1,0 +1,72 @@
+version: '3.1'
+services:
+   aegean:
+      image: aegean
+      build:
+         context: aegean
+         dockerfile: aegean.dcr
+         args:
+            - script=aegean.py
+            - home_dir=/home/aegean
+            - input_dir=/home/aegean/data
+            - processing_dir=/home/aegean/processing
+            - output_dir=/home/aegean/results
+   caesar:
+      image: caesar
+      build:
+         context: caesar
+         dockerfile: caesar.dcr
+         args:
+            - script=caesar.py
+            - home_dir=/home/caesar
+            - input_dir=/home/caesar/data
+            - processing_dir=/home/caesar/processing
+            - output_dir=/home/caesar/results
+   profound:
+      image: profound
+      build:
+         context: profound
+         dockerfile: profound.dcr
+         args:
+            - script=profound.R
+            - ancillaries=*.py
+            - home_dir=/home/profound
+            - input_dir=/home/profound/data
+            - processing_dir=/home/profound/processing
+            - output_dir=/home/profound/results
+   pybdsf:
+      image: pybdsf
+      build:
+         context: pybdsf
+         dockerfile: pybdsf.dcr
+         args:
+            - script=pybdsf.py
+            - home_dir=/home/pybdsf
+            - input_dir=/home/pybdsf/data
+            - processing_dir=/home/pybdsf/processing
+            - output_dir=/home/pybdsf/results
+   selavy:
+      image: selavy
+      build:
+         context: selavy
+         dockerfile: selavy.dcr
+         args:
+            - script=selavy.py
+            - home_dir=/home/selavy
+            - input_dir=/home/selavy/data
+            - processing_dir=/home/selavy/processing
+            - output_dir=/home/selavy/results
+
+   #############################
+   # # #   T O O L B O X   # # #
+   bane:
+      image: bane
+      build:
+         context: toolbox/bane
+         dockerfile: bane.dcr
+         args:
+            - script=bane.py
+            - home_dir=/home/bane
+            - input_dir=/home/bane/data
+            - processing_dir=/home/bane/processing
+            - output_dir=/home/bane/results

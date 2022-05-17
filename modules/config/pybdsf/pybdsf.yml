@@ -1,0 +1,209 @@
+parameters:
+    variables:
+        - thresh_pix:
+            class: rms_parameter
+            type: float
+            default: 5.0
+            definition: "Island threshold boundary (in \u03C3's)."
+        - thresh_isl:
+            class: island_parameter
+            type: float
+            default: 3.0
+            definition: "Source detection threshold (in \u03C3's)."
+    constraints:
+        range:
+            thresh_pix: rms
+            thresh_isl: [2,5]
+        directive: "thresh_pix > thresh_isl"
+    required:
+        - frequency:
+            class: frequency
+            type: float
+            definition: "Input frequency (optional: if in fits header)."
+    optional:
+        - box_size:
+            class: rms_box
+            type: int
+            definition: "Grid RMS Box Size (requires: --step-size)."
+        - step_size:
+            class: rms_box
+            type: int
+            definition: "Grid RMS Step Size (requires: --box-size)."
+catalogue:
+     - source_id:
+         header: Source_id
+         definition: "A unique number that identifies the Source, starting from zero."
+     - island_id:
+         header: Isl_id
+         definition: "A unique number that identifies the Island, starting from zero."
+     - ra:
+         header: RA
+         units: deg
+         definition: "The right ascension of the source (for the equinox of the image), in degrees."
+     - ra_err:
+         header: E_RA
+         units: deg
+         definition: "The error on the right ascension of the source, in degrees."
+     - dec:
+         header: DEC
+         units: deg
+         definition: "The declination of the source (for the equinox of the image), in degrees."
+     - dec_err:
+         header: E_DEC
+         units: deg
+         definition: "The 1-σ error on the declination of the source, in degrees."
+     - flux_total:
+         header: Total_flux
+         units: Jy
+         definition: "The total, integrated Stokes I flux density of the source at the reference frequency, in Jy."
+     - flux_total_err:
+         header: E_Total_flux
+         units: Jy
+         definition: "The 1-σ error on the total flux density of the source, in Jy."
+     - flux_peak:
+         header: Peak_flux
+         units: Jy/beam
+         definition: "The peak Stokes I flux density per beam of the source, in Jy/beam."
+     - flux_peak_err:
+         header: E_Peak_flux
+         units: Jy/beam
+         definition: "The 1-σ error on the peak flux density per beam of the source, in Jy/beam."
+     - ra_max:
+         header: RA_max
+         units: deg
+         definition: "The right ascension of the maximum of the source (for the equinox of the image), in degrees (srl catalogs only)."
+     - ra_max_err:
+         header: E_RA_max
+         units: deg
+         definition: "The 1-σ error on the right ascension of the maximum of the source, in degrees (srl catalogs only)."
+     - dec_max:
+         header: DEC_max
+         units: deg
+         definition: "The declination of the maximum of the source (for the equinox of the image), in degrees (srl catalogs only)."
+     - dec_max_err:
+         header: E_DEC_max
+         units: deg
+         definition: "The 1-σ error on the declination of the maximum of the source, in degrees (srl catalogs only)."
+     - major:
+         header: Maj
+         units: deg
+         definition: "The FWHM of the major axis of the source, in degrees."
+     - major_err:
+         header: E_Maj
+         units: deg
+         definition: "The 1-σ error on the FWHM of the major axis of the source, in degrees."
+     - minor:
+         header: Min
+         units: deg
+         definition: "The FWHM of the minor axis of the source, in degrees."
+     - minor_err:
+         header: E_Min
+         units: deg
+         definition: "The 1-σ error on the FWHM of the minor axis of the source, in degrees."
+     - pa:
+         header: PA
+         units: deg
+         definition: "The position angle of the major axis of the source measured east of north, in degrees."
+     - pa_err:
+         header: E_PA
+         units: deg
+         definition: "The 1-σ error on the position angle of the major axis of the source, in degrees."
+     - major_image_plane:
+         header: Maj_img_plane
+         units: deg
+         definition: "The FWHM of the major axis of the source in the image plane, in degrees."
+     - major_image_plane_err:
+         header: E_Maj_img_plane
+         units: deg
+         definition: "The 1-σ error on the FWHM of the major axis of the source in the image plane, in degrees."
+     - minor_image_plane:
+         header: Min_img_plane
+         units: deg
+         definition: "The FWHM of the minor axis of the source in the image plane, in degrees."
+     - minor_image_plane_err:
+         header: E_Min_img_plane
+         units: deg
+         definition: "The 1-σ error on the FWHM of the minor axis of the source in the image plane, in degrees."
+     - pa_image_plane:
+         header: PA_img_plane
+         units: deg
+         definition: "The position angle in the image plane of the major axis of the source measured east of north, in degrees."
+     - pa_image_plane_err:
+         header: E_PA_img_plane
+         units: deg
+         definition: "The 1-σ error on the position angle in the image plane of the major axis of the source, in degrees."
+     - major_deconvolved:
+         header: DC_Maj
+         units: deg
+         definition: "The FWHM of the deconvolved major axis of the source, in degrees."
+     - major_deconvolved_err:
+         header: E_DC_Maj
+         units: deg
+         definition: "The 1-σ error on the FWHM of the deconvolved major axis of the source, in degrees."
+     - minor_deconvolved:
+         header: DC_Min
+         units: deg
+         definition: "The FWHM of the deconvolved minor axis of the source, in degrees."
+     - minor_deconvolved_err:
+         header: E_DC_Min
+         units: deg
+         definition: "The 1-σ error on the FWHM of the deconvolved minor axis of the source, in degrees."
+     - pa_deconvolved:
+         header: DC_PA
+         units: deg
+         definition: "The position angle of the deconvolved major axis of the source measured east of north, in degrees."
+     - pa_deconvolved_err:
+         header: E_DC_PA
+         units: deg
+         definition: "The 1-σ error on the position angle of the deconvolved major axis of the source, in degrees."
+     - major_image_plane_deconvolved:
+         header: DC_Maj_img_plane
+         units: deg
+         definition: "The FWHM of the deconvolved major axis of the source in the image plane, in degrees."
+     - major_image_plane_deconvolved_err:
+         header: E_DC_Maj_img_plane
+         units: deg
+         definition: "The 1-σ error on the FWHM of the deconvolved major axis of the source in the image plane, in degrees."
+     - minor_image_plane_deconvolved:
+         header: DC_Min_img_plane
+         units: deg
+         definition: "The FWHM of the deconvolved minor axis of the source in the image plane, in degrees."
+     - minor_image_plane_deconvolved_err:
+         header: E_DC_Min_img_plane
+         units: deg
+         definition: "The 1-σ error on the FWHM of the deconvolved minor axis of the source in the image plane, in degrees."
+     - pa_image_plane_deconvolved:
+         header: DC_PA_img_plane
+         units: deg
+         definition: "The position angle in the image plane of the deconvolved major axis of the source measured east of north, in degrees."
+     - pa_image_plane_deconvolved_err:
+         header: E_DC_PA_img_plane
+         units: deg
+         definition: "The 1-σ error on the position angle in the image plane of the deconvolved major axis of the source, in degrees."
+     - flux_total_island:
+         header: Isl_Total_flux
+         units: Jy
+         definition: "The total, integrated Stokes I flux density of the island in which the source is located, in Jy. This value is calculated from the sum of all non-masked pixels in the island with values above thresh_isl."
+     - flux_total_island_err:
+         header: E_Isl_Total_flux
+         units: Jy
+         definition: "The 1-σerror on the total flux density of the island in which the source is located, in Jy."
+     - rms_island:
+         header: Isl_rms
+         units: Jy/beam
+         definition: "The average background rms value of the island, in Jy/beam."
+     - mean_island:
+         header: Isl_mean
+         units: Jy/beam
+         definition: "The averge background mean value of the island, in Jy/beam."
+     - rms_island_residual:
+         header: Resid_Isl_rms
+         units: Jy/beam
+         definition: "The average residual background rms value of the island, in Jy/beam."
+     - mean_island_residual:
+         header: Resid_Isl_mean
+         units: Jy/beam
+         definition: "The averge residual background mean value of the island, in Jy/beam."
+     - s_code:
+         header: S_Code
+         definition: "A code that defines the source structure: where, ‘S’ = a single-Gaussian source that is the only source in the island, ‘C’ = a single-Gaussian source in an island with other sources, and ‘M’ = a multi-Gaussian source."

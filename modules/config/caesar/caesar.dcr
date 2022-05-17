@@ -1,0 +1,30 @@
+FROM sriggi/caesar
+
+ENV LANG=C.UTF-8
+ENV DISPLAY :0
+
+#   && apt-get install -qqy x11-apps \
+RUN set -x \
+   && apt-get update -qq \
+   && apt-get install -y vim \
+   && pip install click \
+   && rm -rf /var/lib/apt/lists/*
+
+# setup processing environment
+ARG home_dir
+ARG input_dir
+ARG processing_dir
+ARG output_dir
+ARG script
+RUN set -x \
+   && mkdir -p $home_dir \
+   && mkdir -p $input_dir \
+   && mkdir -p $processing_dir \
+   && mkdir -p $output_dir \
+   && echo "" >> /root/.bashrc \
+   && echo "# add caesar cmds to path" >> /root/.bashrc \
+   && echo "export PATH=\$PATH:/opt/Software/Sources/caesar-build/" >> /root/.bashrc
+WORKDIR $home_dir
+COPY $script $home_dir
+
+ENTRYPOINT ["/usr/bin/python3","/home/caesar/caesar.py"]

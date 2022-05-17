@@ -1,0 +1,54 @@
+FROM kernsuite/casa:kern-dev
+# https://hub.docker.com/r/kernsuite/casa/tags
+
+ENV LANG=C.UTF-8
+
+# [1] can't remove this -- pybdsf bails!
+#        && apt-get autoremove --purge -y python3-pip \
+# [2] pybsf issue
+#       stty: 'standard input': Inappropriate ioctl for device
+# TO-DO: Try => https://hub.docker.com/r/stimela/pybdsf
+RUN set -x \
+   && apt-get update -qq \
+   && apt-get install -y vim \
+   && apt-get install -y g++ \
+   && apt-get install -y gcc \
+   && apt-get install -y gfortran \
+   && apt-get install -y python3-pip \
+   && apt-get install -y libboost-python-dev \
+   && apt-get install -y libboost-numpy-dev \
+   && apt-get install -y python-setuptools \
+   && apt-get install -y python3-numpy \
+   && pip3 install scipy \
+   && pip3 install pyfits \
+   && pip3 install pywcs \
+   && pip3 install astropy \
+   && pip3 install ipython \
+   && pip3 install matplotlib \
+   && pip3 install https://github.com/lofar-astron/PyBDSF/archive/v1.9.1.tar.gz \
+   && unlink /usr/bin/casa \
+   && rm -rf /opt/casalite-5.4.0 \
+   && apt-get autoremove --purge -y python3-setuptools \
+   && apt-get autoremove --purge -y gfortran \
+   && apt-get autoremove --purge -y gcc \
+   && apt-get autoremove --purge -y g++ \
+   && rm -rf /var/lib/lists/*
+
+# setup processing environment
+ARG home_dir
+ARG input_dir
+ARG processing_dir
+ARG output_dir
+ARG script
+RUN set -x \
+   && apt-get update -qq \
+   && apt-get install -y python3-pip \
+   && pip3 install click \
+   && mkdir -p $home_dir \
+   && mkdir -p $input_dir \
+   && mkdir -p $processing_dir \
+   && mkdir -p $output_dir
+WORKDIR $home_dir
+COPY $script $home_dir
+
+ENTRYPOINT ["/usr/bin/python3","/home/pybdsf/pybdsf.py"]

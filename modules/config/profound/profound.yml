@@ -1,0 +1,196 @@
+parameters:
+    variables:
+        - skycut:
+            class: rms_parameter
+            type: float
+            default: 2.82
+            definition: "Island threshold (in skyRMS)."
+        - tolerance:
+            class: island_parameter
+            type: float
+            default: 4.0
+            definition: "Define island separation height."
+    constraints:
+        range:
+            skycut: rms
+            tolerance: [2,5]
+        directive: "skycut > tolerance"
+catalogue:
+    # NB: Note all units have been defined!
+    - component_id:
+        header: segID 
+        definition: "Segmentation ID, which can be matched against values in segim (segID is for segstats). NB: This catalogue is segment-based: i.e., a would-be PyBDSF source, if it cantained Guassians."
+    #- island_id:
+    #    header: groupID
+    #    definition: "Segmentation ID, which can be matched against values in ‘group$groupim’ (groupID is for groupstats). These are ids of a grouping of subislands. NB: These comes from the group-based catalogue output option: i.e., equivlant to pyBDSF islands."
+    - unique_id:
+        header: uniqueID
+        definition: "Unique ID, which is fairly static and based on the (xmax, ymax) position."
+    - ra_centre:
+        header: RAcen
+        units: deg
+        definition: "Flux weighted degrees RA centre."
+    - dec_centre:
+        header: Deccen
+        units: deg
+        definition: "Flux weighted degrees Dec centre."
+    - ra_max:
+        header: RAmax
+        definition: "RA of maximum flux."
+    - dec_max:
+        header: Decmax
+        definition: "Dec of maximum flux."
+    - x_centre:
+        header: xcen
+        definition: "Flux weighted x centre."
+    - y_centre:
+        header: ycen
+        definition: "Flux weighted y centre."
+    - x_rms:
+        header: xsd
+        units: pixel
+        definition: "Weighted σx in units of pix."
+    - y_rms:
+        header: ysd
+        units: pixel
+        definition: "Weighted σy in units of pix."
+    - xy_cov:
+        header: covxy
+        units: pixel
+        definition: "Weighted σxy in units of pix."
+    - xy_cor:
+        header: corxy
+        units: pixel
+        definition: "Weighted ρxy in units of pix."
+    - semimajor:
+        header: semimaj
+        units: deg
+        definition: "Weighted standard deviation along the major axes in units of deg."
+    - semiminor:
+        header: semimin
+        units: deg
+        definition: "Weighted standard deviation along the minor axes in units of deg."
+    - pa:
+        header: ang
+        units: deg
+        definition: "The orientation of the semi-major axis CCW from North in units of deg." 
+    - minor_to_major_axis_ratio:
+        header: axrat
+        definition: "The axial ratio as given by minor/major, respectively."
+    - x_max:
+        header: xmax
+        definition: "x position of maximum flux."
+    - y_max:
+        header: ymax
+        definition: "y position of maximum flux."
+    - centre_to_max_offset:
+        header: sep
+        definition: "Radial offset between the cen and max definition of the centre (units of ‘pixscale’, so if ‘pixscale’ represents the standard asec/pix this will be asec)"
+    - flux_total:
+        header: flux
+        definition: "Total flux (calculated using ‘image’-‘sky’) in ADUs."
+    - flux_total_err:
+        header: flux_err
+        definition: "Error in total flux."
+    - magnitude:
+        header: mag
+        definition: "Total flux converted to mag using ‘magzero’ (i.e., magnitude zero point)."
+    - magnitude_err:
+        header: mag_err
+        definition: "Error in the magnitude."
+    - max_flux_fraction:
+        header: cenfrac
+        definition: "Fraction of flux in the brightest pixel"
+    - asymmetry:
+        header: asymm
+        definition: "180 degree flux asymmetry (0-1, where 0 is perfect symmetry and 1 complete asymmetry)"
+    - flux_reflect:
+        header: flux_reflect
+        definition: "Flux corrected for asymmetry by doubling the contribution of flux for asymmetric pixels (defined as no matching segment pixel found when the segment is rotated through 180 degrees)."
+    - magnitude_reflect:
+        header: mag_reflect
+        definition: "‘flux_reflect’ converted to mag using ‘magzero’ (i.e., magnitude zero point)."
+    - n50:
+        header: N50
+        definition: "Number of brightest pixels containing 50% of the flux."
+    - n90:
+        header: N90
+        definition: "Number of brightest pixels containing 90% of the flux."
+    - n100:
+        header: N100
+        definition: "Number of brightest pixels containing 100% of the flux."
+    - r50:
+        header: R50
+        definition: "Approximate elliptical semi-major axis containing 50% of the flux (units of ‘pixscale’, so if ‘pixscale’ represents the standard asec/pix this will be asec)."
+    - r90:
+        header: R90
+        definition: "Approximate elliptical semi-major axis containing 90% of the flux (units of ‘pixscale’, so if ‘pixscale’ represents the standard asec/pix this will be asec)."
+    - r100:
+        header: R100
+        definition: "Approximate elliptical semi-major axis containing 100% of the flux (units of ‘pixscale’, so if ‘pixscale’ represents the standard asec/pix this will be asec)."
+    - sb_n50:
+        header: SB_N50
+        definition: "Mean surface brightness containing brightest 50% of the flux, calculated as ‘flux’*0.5/‘N50’ (if ‘pixscale’ has been set correctly then this column will represent mag/asec2; otherwise, it will be mag/pix2)."
+    - sb_n90:
+        header: SB_N90
+        definition: "Mean surface brightness containing brightest 90% of the flux, calculated as ‘flux’*0.9/‘N90’ (if ‘pixscale’ has been set correctly then this column will represent mag/asec2; otherwise, it will be mag/pix2)."
+    - sb_n100:
+        header: SB_N100
+        definition: "Mean surface brightness containing brightest 100% of the flux, calculated as ‘flux’/‘N100’ (if ‘pixscale’ has been set correctly then this column will represent mag/asec2; otherwise, it will be mag/pix2)."
+    - concentration:
+        header: con
+        definition: "Concentration, ‘R50’/‘R90’."
+    - detection_significance:
+        header: signif
+        definition: "Approximate singificance of the detection using the Chi-Square distribution."
+    - false_positive_limit:
+        header: FPlim
+        definition: "Approximate false-positive significance limit below which one such source might appear spuriously on an image this large."
+    - flux_err_sky:
+        header: flux_err_sky
+        definition: "Sky subtraction component of the flux error."
+    - flux_err_sky_rms:
+        header: flux_err_skyRMS
+        definition: "Sky RMS component of the flux error."
+    - flux_err_shot:
+        header: flux_err_shot
+        definition: "Object shot-noise component of the flux error (only if ‘gain’ is provided)."
+    - flux_err_cor:
+        header: flux_err_cor
+        definition: "NB: Not defined in manual."
+    - cor_seg:
+        header: cor_seg
+        definition: "NB: Not defined in manual."
+    - sky_mean:
+        header: sky_mean
+        definition: "Mean flux of the sky over all segment pixels."
+    - sky_sum:
+        header: sky_sum
+        definition: "Total flux of the sky over all segment pixels."
+    - sky_rms_mean:
+        header: skyRMS_mean
+        definition: "Mean value of the sky RMS over all segment pixels."
+    - nedge:
+        header: Nedge
+        definition: "Number of edge segment pixels that make up the outer edge of the segment."
+    - nsky:
+        header: Nsky
+        definition: "Number of edge segment pixels that are touching sky."
+    - nobject:
+        header: Nobject
+        definition: "Number of edge segment pixels that are touching another object segment."
+    - nborder:
+        header: Nborder
+        definition: "Number of edge segment pixels that are touching the ‘image’ border."
+    - nmask:
+        header: Nmask
+        definition: "Number of edge segment pixels that are touching a masked pixel (note NAs in ‘image’ are also treated as masked pixels)."
+    - edge_frac:
+        header: edge_frac
+        definition: "Fraction of edge segment pixels that are touching the sky i.e. ‘Nsky’‘Nedge’, higher generally meaning more robust segmentation statistics."
+    - edge_excess:
+        header: edge_excess
+        definition: "Ratio of the number of edge pixels to the expected number given the elliptical geometry measurements of the segment. If this is larger than 1 then it is a sign that the segment geometry is irregular, and is likely a flag for compromised photometry."
+    - flag_border:
+        header: flag_border
+        definition: "A binary flag telling the user which ‘image’ borders the segment touches. The bottom of the ‘image’ is flagged 1, left=2, top=4 and right=8. A summed combination of these flags indicate the segment is in a corner touching two borders: bottom-left=3, top-left=6, top-right=12, bottom-right=9."

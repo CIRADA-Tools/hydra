@@ -1,0 +1,99 @@
+FROM r-base:4.0.2
+
+
+ENV LANG=C.UTF-8
+
+# citation info:
+#   Robotham A, Davies L, Driver S, Koushan S, Taranu D, Casura S, Liske J (2018). ProFound: Source Extraction and Application to Modern Survey Data, volume 476. https://github.com/asgr/ProFound.
+#   
+#   Corresponding BibTeX entry:
+#   
+#     @Manual{,
+#       title = {ProFound: Source Extraction and Application to Modern
+#         Survey Data},
+#       author = {A.S.G. Robotham and L.J.M Davies and S.P. Driver and S.
+#         Koushan and D.S. Taranu and S. Casura and J. Liske},
+#       year = {2018},
+#       journal = {MNRAS},
+#       volume = {476},
+#       pages = {3137},
+#       url = {https://github.com/asgr/ProFound},
+#     }
+
+# add profound source finder and reticular for Python software
+# notes: https://github.com/asgr/ProFound
+#   && echo "install.packages('ProFound')"      >> install.R \
+#
+#   && echo "install.packages('remotes')"              >> install.R \
+#   && echo "remotes::install_github('asgr/ProFound')" >> install.R \
+#
+# The devtools has to many missing package dependencies
+#   && echo "install.packages('devtools')"              >> install.R \
+#   && echo "devtools::install_github('asgr/ProFound')" >> install.R \
+WORKDIR /tmp
+RUN set -x \
+   && apt-get update \
+   && apt-get install -y vim \
+   && apt-get install -y make \
+   && apt-get install -y gcc \
+   && apt-get install -y g++ \
+   && apt-get install -y libtiff-dev \
+   && apt-get install -y libjpeg-dev \
+   && apt-get install -y libpng-dev \
+   && apt-get install -y fftw3 \
+   && apt-get install -y libfftw3-dev \
+   && apt-get install -y libfftw3-doc \
+   && apt-get install -y libcurl3-dev \
+   && apt-get install -y pandoc \
+   && apt-get install -y libx11-dev \
+   && apt-get install -y libxml2-dev \
+   && touch install.R \
+   && echo "Sys.setenv(R_REMOTES_NO_ERRORS_FROM_WARNINGS='true')" >> install.R \
+   && echo "install.packages('magicaxis')"                        >> install.R \
+   && echo "install.packages('FITSio')"                           >> install.R \
+   && echo "install.packages('data.table')"                       >> install.R \
+   && echo "install.packages('knitr')"                            >> install.R \
+   && echo "install.packages('rmarkdown')"                        >> install.R \
+   && echo "install.packages('BiocManager')"                      >> install.R \
+   && echo "BiocManager::install('EBImage')"                      >> install.R \
+   && echo "install.packages('akima')"                            >> install.R \
+   && echo "install.packages('imager')"                           >> install.R \
+   && echo "install.packages('LaplacesDemon')"                    >> install.R \
+   && echo "install.packages('ProFit')"                           >> install.R \
+   && echo "install.packages('remotes')"                          >> install.R \
+   && echo "remotes::install_github('asgr/ProFound')"             >> install.R \
+   && echo "install.packages('reticulate')"                       >> install.R \
+   && Rscript --verbose install.R \
+   && rm install.R \
+   && apt-get install -y python3 \
+   && apt-get install -y python3-dev \
+   && apt-get install -y python3-pip \
+   && pip3 install pandas \
+   && pip3 install astropy \
+   && pip3 install alphashape \
+   && apt-get autoremove --purge -y make \
+   && apt-get autoremove --purge -y gcc \
+   && apt-get autoremove --purge -y g++ \
+   && apt-get autoremove --purge -y python3-pip \
+   && rm -rf /var/lib/apt/lists/*
+
+# setup processing environment
+# Note: We could copy pix2world.py into the containter, but it's small enough, and
+#       it keeps things maintianable in terms following a standard for containerizing
+#       source finders. This is deviation has more to do with mixing R and Python.
+ARG home_dir
+ARG input_dir
+ARG processing_dir
+ARG output_dir
+ARG script
+ARG ancillaries
+RUN set -x \
+   && mkdir -p $home_dir \
+   && mkdir -p $input_dir \
+   && mkdir -p $processing_dir \
+   && mkdir -p $output_dir
+WORKDIR $home_dir
+COPY $script $home_dir
+COPY $ancillaries $home_dir/
+
+ENTRYPOINT ["/usr/bin/Rscript","/home/profound/profound.R"]

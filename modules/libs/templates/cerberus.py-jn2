@@ -1,0 +1,181 @@
+###########################################################################################################
+#                                                                                                         #
+#                        W A R N I N G :   A U T O G E N E R A T E D   S C R I P T !                      #
+#                                                                                                         #
+###########################################################################################################
+# Cenerated: {{date}}
+
+import re
+import os
+import sys
+sys.path.insert(0,"../")
+from libs.fits_tools import FITS
+from libs.config_tools import cfg_get_main
+from libs.config_tools import cfg_get_build_context
+from libs.config_tools import cfg_fetch_frequency
+from libs.exceptions import print_warning
+from libs.exceptions import print_ok
+from libs.exceptions import HydraContainerError
+from pathlib import Path
+
+# command line
+import click
+from libs.click_tools import SpecialHelpOrder
+from libs.click_tools import HelpCommandPriority
+
+cmd=HelpCommandPriority()
+@click.group(cls=SpecialHelpOrder)
+def cerberus():
+    """\b
+       Runs a collection of source finder modules.
+
+       Cerberus: a multiheaded dog, son of Typhon.
+    """
+    pass
+
+{% macro command(source_finder) %}
+@cerberus.command(help_priority=cmd.prio())
+@click.argument('fits_image_file',nargs=1)
+@click.option('--output-dir',default=None,type=str,help="Results output directory.")
+{%- for v in variables %}
+{%- if source_finder == 'all' -%}{%- set flag = v.flag -%}{%- else -%}{%- set flag = v.rflag -%}{%- endif -%}
+{%- if source_finder == 'all' or v.module == source_finder %}
+@click.option('{{flag}}',default={{v.default}},type={{v.type}},help="{{v.help}}")
+{%- endif %}
+{%- endfor %}
+@click.option('--fits',is_flag=True,default=False,help="Output FITS catalogue. [default: CSV]")
+@click.option('--residual',is_flag=True,default=False,help="Output residual and module FITS files.")
+@click.option('--dump',is_flag=True,default=False,help="Dump out all processing files.")
+def {% if source_finder == 'all' %}process{% else %}{{source_finder}}{% endif %}(
+    fits_image_file,
+    output_dir,
+    {%- for v in variables %}
+    {%- if source_finder == 'all' -%}{%- set var = v.var -%}{%- else -%}{%- set var = v.rvar -%}{%- endif -%}
+    {%- if source_finder == 'all' or v.module == source_finder %}
+    {{var}},
+    {%- endif %}
+    {%- endfor %}
+    fits,
+    residual,
+    dump
+):
+    """\b
+       Process FITS_IMAGE_FILE using {% if source_finder == 'all' %}multiple source finders{% else %}{{source_finder}} source finder{% endif %}.
+    """
+    # ok, let's do this!
+    print_ok(f"Processing: {fits_image_file}")
+
+    # make sure file exist before we start spawning containers
+    if not os.path.isfile(fits_image_file):
+        msg = ""
+        msg += f"> ERROR: File does not exist: {fits_image_file}"
+        print_warning(msg)
+        print_ok("Bye!")
+        return
+
+    {% for v in variables -%}
+    {%- if source_finder == 'all' -%}{%- set var = v.var -%}{%- else -%}{%- set var = v.rvar -%}{%- endif -%}
+    {%- if source_finder == 'all' or v.module == source_finder -%}
+    {%- if v.required and v.class == 'frequency' -%}
+    # {{v.module}} requires input frequency -- make sure we have it
+    fd = FITS(fits_image_file)
+    if {{var}} is None and not fd.has_frequency():
+        survey = fd.get_survey()
+        {{var}} = cfg_fetch_frequency(survey)
+        if not {{var}} is None:
+            msg = ""
+            msg += f"> WARNING: Frequency missing from header: {fits_image_file}\n"
+            msg += f">> Using {survey} configuration default:\n"
+            msg += ">>   FREQ: {} Hz".format({{var}})
+            print_warning(msg)
+        else:
+            msg = ""
+            msg += f"> ERROR: Frequency missing from header: {fits_image_file}\n"
+            msg += f">> Require Input:\n"
+            msg += ">>    --{}".format(re.sub(r'_','-','{{var}}'))
+            print_warning(msg)
+            print_ok("Bye!")
+            return
+    del fd # free some memory
+    {%- endif -%}
+    {%- endif -%}
+    {% endfor %}
+
+    cfg = cfg_get_main()
+    {% if source_finder == 'all' %}
+    # list the modules being used
+    print_ok(f"> Using modules:")
+    for module in cfg['modules']:
+        key = list(module.keys())[0]
+        print_ok(f">   o {module[key]['name']}")
+    {% else %}
+    # print module being used
+    print_ok(f"> Using module:")
+    print_ok(f">   o {{source_finder}}")
+    {% endif %}
+
+    # get file-name and full-paths
+    input_file = re.sub(r"^(.*?/)*","",fits_image_file)
+    input_path = re.sub(r"^((.*?/)*).*$",r"\1",fits_image_file)
+    if input_path == "":
+        input_path = "."
+    input_path  = Path(input_path).resolve()
+    output_path = Path(output_dir).resolve() if not output_dir is None else input_path
+
+    # loop over source finders and process image
+    context = cfg_get_build_context()
+    for module in cfg['modules']:
+        container = list(module.keys())[0]
+        {% if source_finder != 'all' %}
+        if container != '{{source_finder}}':
+            continue{% endif %}
+        args = [re.sub(r" +","",c) for c in context['services'][container]['build']['args']]
+        args = {p.split('=')[0]:p.split('=')[1] for p in args}
+        # TO-DO: Simplify
+        if input_path == output_path:
+            dcr_cmd = "docker run --rm -t -v {}:{} {} {} {} {} {}".format(
+                input_path,args['input_dir'],   # data in-out mount point
+                container,                      # service
+                args['input_dir'],              # input dir
+                args['processing_dir'],         # processing dir
+                args['input_dir'],              # output dir
+                input_file                      # image file
+            )
+        else:
+            dcr_cmd = "docker run --rm -t -v {}:{} -v {}:{} {} {} {} {} {}".format(
+                input_path, args['input_dir'],  # data in mount point
+                output_path,args['output_dir'], # data out mount point
+                container,                      # service
+                args['input_dir'],              # input dir
+                args['processing_dir'],         # processing dir
+                args['output_dir'],             # output dir
+                input_file                      # image file
+            )
+        {% for module in modules %}
+        {%- if source_finder == 'all' or module == source_finder %}
+        {% if not loop.first and source_finder == 'all' %}el{% endif %}if container == '{{module}}':{% for v in variables %}{% if v.module == module %}
+            {% if source_finder == 'all' %}{% set var = v.var %}{% else %}{% set var = v.rvar %}{% endif -%}
+             dcr_cmd += "" if {{var}} is None else " {{v.token}} {}".format({{var}}){% endif %}{% endfor %}{% endif %}{% endfor %}
+        dcr_cmd += "" if residual is False else " --residual"
+        dcr_cmd += "" if fits is False else " --fits"
+        dcr_cmd += "" if dump is False else " --dump"
+        print_ok(f"> Launching {module[container]['name']} Container:")
+        print_ok(f"> $ {dcr_cmd}")
+        if os.system(dcr_cmd) != 0:
+            print_warning(f"Container Error: {module[container]['name']}")
+            raise HydraContainerError
+        # debug
+        #if container == 'profound':
+        #    os.system(dcr_cmd)
+
+    print_ok(f"[Done]")
+{% endmacro %}
+
+{{ command('all') }}
+
+{% for module in modules %}
+{{ command(module) }}
+{% endfor %}
+
+if __name__ == "__main__":
+    cerberus()

@@ -1,0 +1,147 @@
+credit:
+    papers:
+       - "Hancock et al 2012, MNRAS, 422, 1812"
+       - "Hancock et al 2018, PASA, 35, 11H"
+parameters:
+    variables:
+        - seedclip: 
+            class: rms_parameter
+            type: float
+            default: 5.0
+            definition: "The clipping value (in \u03C3's) for seeding islands."
+        - floodclip:
+            class: island_parameter
+            type: float
+            default: 4.0
+            definition: "The clipping value (in \u03C3's) for growing islands."
+    constraints:
+        range:
+            seedclip: rms
+            floodclip: [2,5]
+        directive: "seedclip > floodclip"
+    optional:
+        - box_size:
+            class: rms_box
+            type: int
+            definition: "Grid RMS Box Size (requires: --step-size)."
+        - step_size:
+            class: rms_box
+            type: int
+            definition: "Grid RMS Step Size (requires: --box-size)."
+    #   * * *   T O   B E   D E P R E C A T E D   * * *
+    #suggested:
+    #    # TO-DO: Implement
+    #    - beam:
+    #        class: beam
+    #        type: float
+    #        fields:
+    #            - BMAJ:
+    #                definition: "Beam major axis (\u00B0)."
+    #            - BMIN:
+    #                definition: "Beam minor axis (\u00B0)."
+    #            - BPA:
+    #                definition: "Beam position angle (\u00B0)."
+    #    # TO-DO: Add BMAJ, BMIN and BPA (?)... otherwise, BANE will take a guess if not in header
+catalogue:
+    - island_id:
+        header: island
+        definition: "Numerical indication of the island from which the source was fitted."
+    - source_id:
+        header: source
+        definition: "Source number within that island."
+    - background_flux:
+        header: background
+        units: Jy/beam
+        definition: "Background flux density in Jy/beam."
+    - rms_local:
+        header: local_rms
+        units: Jy/beam
+        definition: "Local rms in Jy/beam."
+    - ra_hms:
+        header: ra_str
+        units: HMS
+        definition: "RA J2000 sexigecimal format."
+    - dec_dms:
+        header: dec_str
+        units: DMS
+        definition: "Dec J2000 sexigecimal format."
+    - ra:
+        header: ra
+        units: deg
+        definition: "RA in degrees."
+    - ra_err:
+        header: err_ra
+        units: deg
+        definition: "Source-finding fitting error on RA in degrees."
+    - dec:
+        header: dec
+        units: deg
+        definition: "Dec in degrees."
+    - dec_err:
+        header: err_dec
+        units: deg
+        definition: "Source-finding fitting error on dec in degrees."
+    - flux_peak:
+        header: peak_flux
+        units: Jy/beam
+        definition: "Peak flux density in Jy/beam."
+    - flux_peak_err: 
+        header: err_peak_flux
+        units: Jy/beam
+        definition: "Source-finding fitting error on peak flux density in Jy/beam."
+    - flux_total:
+        header: int_flux
+        units: Jy
+        definition: "Integrated flux density in Jy. This is calcualted from a/b/peak_flux and the synthesized beam size. It is not fit directly."
+    - flux_total_err:
+         header: err_int_flux
+         units: Jy
+         definition: "Source-finding fitting error on integrated flux density in Jy."
+    - semimajor:
+         header: a
+         units: arcsec
+         definition: "Fitted semi-major axis in arcsec."
+    - semimajor_err: 
+         header: err_a
+         units: arcsec
+         definition: "Error on fitted semi-major axis in arcsec."
+    - semiminor:
+         header: b
+         units: arcsec
+         definition: "Fitted semi-minor axis in arcsec."
+    - semiminor_err:
+         header: err_b
+         units: arcsec
+         definition: "Error on fitted semi-minor axis in arcsec."
+    - pa:
+         header: pa
+         units: deg
+         definition: "Fitted position angle in degrees."
+    - pa_err:
+         header: err_pa
+         units: deg
+         definition: "Error on fitted position angle in degrees."
+    - flags:
+         header: flags
+         definition: "Fitting flags (should be all 0 for a good fit)."
+    - residual_mean:
+         header: residual_mean
+         definition: "Mean of the residual flux remaining in the island after fitted Gaussian is subtracted."
+    - residual_std:
+         header: residual_std
+         definition: "Standard deviation of the residual flux remaining in the island after fitted Gaussian is subtracted."
+    - uuid:
+         header: uuid
+         definition: "A universally unique identifier for this component."
+    - psf_a:
+         header: psf_a
+         units: arcsec
+         definition: "The semi-major axis of the point spread function at this location (arcsec)."
+    - psf_b:
+         header: psf_b
+         units: arcsec
+         definition: "The semi-minor axis of the point spread function at this location (arcsec)."
+    - psf_pa:
+         header: psf_pa
+         units: arcsec
+         definition: "The position angle of the point spread function at this location (arcsec)."

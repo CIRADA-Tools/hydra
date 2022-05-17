@@ -1,0 +1,163 @@
+parameters:
+    variables:
+        - snrCut:
+            class: rms_parameter
+            type: float
+            default: 4.0
+            definition: "Threshold value (in \u03C3's) above \u00B5-noise."
+        - growthCut:
+            class: island_parameter
+            type: float
+            default: 3.0
+            definition: "SNR to grow detections down to."
+    constraints:
+        range:
+            snrCut: rms
+            growthCut: [2,5]
+        directive: "snrCut > growthCut"
+    optional:
+        - box_size:
+            class: rms_box
+            type: int
+            definition: "Grid RMS Box Size (requires: --step-size)."
+        - step_size:
+            class: rms_box
+            type: int
+            definition: "Grid RMS Step Size (requires: --box-size)."
+catalogue:
+    - island_id:
+        header: island_id
+        definition: "Island ID."
+    - component_id:
+        header: component_id
+        definition: "Component ID."
+    - component_name:
+        header: component_name
+        definition: "Component Name."
+    - ra_hms:
+        header: ra_hms_cont
+        units: HMS
+        definition: "RA Position in HMS."
+    - dec_dms:
+        header: dec_dms_cont
+        units: DMS 
+        definition: "Dec Position in DMS."
+    - ra:
+        header: ra_deg_cont
+        units: deg
+        definition: "RA Position in deg."
+    - dec:
+        header: dec_deg_cont
+        units: deg
+        definition: "Dec Position in deg."
+    - ra_err:
+        header: ra_err
+        units: arcsec
+        definition: "RA Position Error in arcsec."
+    - dec_err:
+        header: dec_err
+        units: arcsec
+        definition: "Dec Position Error in arcsec."
+    - frequency:
+        header: freq
+        units: MHz 
+        definition: "Frequency (MHz)."
+    - flux_peak:
+        header: flux_peak
+        units: mJy/beam
+        definition: "Peak Flux (mJy/Beam)."
+    - flux_peak_err:
+        header: flux_peak_err
+        units: mJy/beam
+        definition: "Peak Flux Error (mJy/Beam)."
+    - flux_total:
+        header: flux_int
+        units: mJy
+        definition: "Integrated Flux (mJy)."
+    - flux_total_err:
+        header: flux_int_err
+        units: mJy
+        definition: "Integrated Flux Error (mJy)."
+    - major:
+        header: maj_axis
+        units: arcsec
+        definition: "Position Major Axis (arcsec)."
+    - minor:
+        header: min_axis
+        units: arcsec
+        definition: "Position Minor Axis (arcsec)."
+    - pa:
+        header: pos_ang
+        units: deg
+        definition: "Position Angle (deg)."
+    - major_err:
+        header: maj_axis_err
+        units: arcsec
+        definition: "Position Major Axis Error (arcsec)."
+    - minor_err:
+        header: min_axis_err
+        units: arcsec
+        definition: "Position Minor Axis Error (arcsec)."
+    - pa_err:
+        header: pos_ang_err
+        units: deg
+        definition: "Position Angle Error (deg)."
+    - major_deconvolved:
+        header: maj_axis_deconv
+        units: arcsec
+        definition: "Deconvolved Position Major Axis (arcsec)."
+    - minor_deconvolved:
+        header: min_axis_deconv
+        units: arcsec
+        definition: "Deconvolved Position Minor Axis (arcsec)."
+    - pa_deconvolved:
+        header: pos_ang_deconv
+        units: deg
+        definition: "Deconvolved Position Angle (deg)."
+    - major_deconvolved_err:
+        header: maj_axis_deconv_err
+        units: arcsec
+        definition: "Deconvolved Position Major Axis Error (arcsec)."
+    - minor_deconvolved_err:
+        header: min_axis_deconv_err
+        units: arcsec
+        definition: "Deconvolved Position Minor Axis Error (arsec)."
+    - pa_deconvolved_err:
+        header: pos_ang_deconv_err
+        units: deg
+        definition: "Deconvolved Position Angle Error (deg)."
+    - chi_squared_fit:
+        header: chi_squared_fit
+        definition: "Goodness of fit."
+    - rms_fit_gauss:
+        header: rms_fit_gauss
+        units: mJy/beam
+        definition: "RMS of Gaussian fit (mJy/beam)."
+    - spectral_index:
+        header: spectral_index
+        definition: "Spectral Index."
+    - spectral_curvature:
+        header: spectral_curvature
+        definition: "Spectral Curvature."
+    - spectral_index_err:
+        header: spectral_index_err
+        definition: "Spectral Index Error."
+    - spectral_curvature_err:
+        header: spectral_curvature_err
+        definition: "Spectral Curvature Error."
+    - rms_image:
+        header: rms_image
+        units: mJy/beam
+        definition: "Local RMS (mJy/beam)."
+    - has_siblings:
+        header: has_siblings
+        definition: "Indicates if component is part of an island of more than one component."
+    - fit_is_estimate:
+        header: fit_is_estimate
+        definition: "Fit failed, estimation used."
+    - spectral_index_from_taylor_term:
+        header: spectral_index_from_TT
+        definition: "Indicates if spectral index computed from 1st order Taylor term image."
+    - flag_c4:
+        header: flag_c4
+        definition: "NB: Not defined in manual."

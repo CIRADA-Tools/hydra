@@ -1,0 +1,203 @@
+credit:
+    papers:
+       - "S. Riggi et al., 'Automated detection of extended sources in radio maps: progress from the SCORPIO survey', MNRAS (2016) doi: 10.1093/mnras/stw982, arXiv:1605.01852"
+       - "S. Riggi, F. Vitello et al., 'CAESAR source finder: recent developments and testing', submitted to PASA (2019)"
+parameters:
+    variables:
+        - seedThr:
+            class: rms_parameter
+            type: float
+            default: 5.0
+            definition: "Blob finding threshold (in \u03C3's)."
+        - mergeThr:
+            class: island_parameter
+            type: float
+            default: 2.6
+            definition: "Blob growth threshold (in \u03C3's)"
+    constraints:
+        range:
+            seedThr: rms
+            mergeThr: [2,3]
+        directive: "seedThr > mergeThr"
+    #optional:
+    #    - box_size:
+    #        class: rms_box
+    #        type: int
+    #        definition: "Grid RMS Box Size (requires: --step-size)."
+    #    - step_size:
+    #        class: rms_box
+    #        type: int
+    #        definition: "Grid RMS Step Size (requires: --box-size)."
+catalogue:
+   - name:
+      header: name
+      definition: "Island source name assigned by finder"
+   - npix:
+      header: npix
+      definition: "Number of pixels in source"
+   - component_id:
+      header: componentId
+      definition: "Fitted component id"
+   - iau_name:
+      header: iauName
+      definition: "Fitted component name in IAU notation"
+   - x:
+      header: x
+      definition: "Fitted component centroid in image coordinates along x axis "
+   - y:
+      header: y
+      definition: "Fitted component centroid in image coordinates along y axis "
+   - x_err:
+      header: x_err
+      definition: "Fitted component centroid error in image coordinates along x axis "
+   - y_err:
+      header: y_err
+      definition: "Fitted component centroid error in image coordinates along y axis "
+   - ra:
+      header: x_wcs
+      units: deg
+      definition: "Fitted component centroid in selected WCS coordinate (deg) along x axis"
+   - dec:
+      header: y_wcs
+      units: deg
+      definition: "Fitted component centroid in selected WCS coordinate (deg) along y axis"
+   - ra_err:
+      header: x_wcs_err
+      units: deg
+      definition: "Fitted component centroid error in selected WCS coordinate (deg) along x axis"
+   - dec_err:
+      header: y_wcs_err
+      units: deg
+      definition: "Fitted component centroid error in selected WCS coordinate (deg) along y axis"
+   - nu:
+      header: nu
+      units: GHz
+      definition: "Spectral axis value present in image header. If frequency it is given in GHz units."
+   - flux_peak:
+      header: Speak
+      units: Jy/beam
+      definition: "Fitted component peak brightness in Jy/beam units."
+   - flux_peak_err:
+      units: Jy/beam
+      header: Speak_err
+      definition: "Fitted component peak brightness error in Jy/beam units."
+   - flux_total:
+      header: S
+      units: Jy
+      definition: "Fitted component flux density in Jy units"
+   - flux_total_err:
+      header: S_err
+      units: Jy
+      definition: "Fitted component flux density error in Jy units"
+   - flux_island:
+      header: S_island
+      units: Jy
+      definition: "Fitted island flux density in Jy units"
+   - flux_island_err:
+      header: S_island_err
+      units: Jy
+      definition: "Fitted island flux density error in Jy units"
+   - beam_area:
+      header: beamArea
+      definition: "Number of pixels in beam. Used to convert flux parameters from Jy/beam to Jy/pixel (e.g. Jy/pixel=Jy/beam/beamarea)."
+   - bmaj:
+      header: bmaj
+      definition: "Fitted component ellipse major axis in image coordinates"
+   - bmin:
+      header: bmin
+      definition: "Fitted component ellipse major axis in image coordinates"
+   - pa:
+      header: pa
+      units: deg
+      definition: "Fitted component ellipse position angles in deg (measured counterclock-wise from North)"
+   - bmaj_err:
+      header: bmaj_err
+      definition: "Fitted component ellipse major axis error in image coordinates"
+   - bmin_err:
+      header: bmin_err
+      definition: "Fitted component ellipse major axis error in image coordinates"
+   - pa_err:
+      header: pa_err
+      units: deg
+      definition: "Fitted component ellipse position angles error in deg"
+   - bmaj_wcs:
+      header: bmaj_wcs
+      units: arcsec
+      definition: "Fitted component ellipse major axis in selected WCS coordinates (arcsec)"
+   - bmin_wcs:
+      header: bmin_wcs
+      units: arcsec
+      definition: "Fitted component ellipse major axis in selected WCS coordinates (arcsec)"
+   - pa_wcs:
+      header: pa_wcs
+      units: deg
+      definition: "Fitted component ellipse position angles in deg (measured counterclock-wise from North)"
+   - bmaj_wcs_err:
+      header: bmaj_wcs_err
+      units: arcsec
+      definition: "Fitted component ellipse major axis error in selected WCS coordinates (arcsec)"
+   - bmin_wcs_err:
+      header: bmin_wcs_err
+      units: arcsec
+      definition: "Fitted component ellipse major axis error in selected WCS coordinates (arcsec)"
+   - pa_wcs_err:
+      header: pa_wcs_err
+      units: deg
+      definition: "Fitted component ellipse position angles error in deg"
+   - bmaj_beam:
+      header: bmaj_beam
+      units: arcsec
+      definition: "Beam ellipse major axis (arcsec)"
+   - bmin_beam:
+      header: bmin_beam
+      units: arcsec
+      definition: "Beam ellipse minor axis (arcsec)"
+   - pa_beam:
+      header: pa_beam
+      units: deg
+      definition: "Beam ellipse position angles in deg (measured counterclock-wise from North)"
+   - bmaj_deconv_wcs:
+      header: bmaj_deconv_wcs
+      units: arcsec
+      definition: "Fitted component ellipse major axis in selected WCS coordinates, deconvolved by beam (arcsec)"
+   - bmin_deconv_wcs:
+      header: bmin_deconv_wcs
+      units: arcsec
+      definition: "Fitted component ellipse major axis in selected WCS coordinates, deconvolved by beam (arcsec)"
+   - pa_deconv_wcs:
+      header: pa_deconv_wcs
+      units: deg
+      definition: "Fitted component ellipse position angles in deg, deconvolved by beam (measured counterclock-wise from North)"
+   - fit_beam_ellipse_eccentricity_ratio:
+      header: fitBeamEllipseEccentricityRatio
+      definition: "Ratio between eccentricities of fitted and beam ellipses"
+   - fit_beam_ellipse_area_ratio:
+      header: fitBeamEllipseAreaRatio
+      definition: "Ratio between areas of fitted ellipse and beam ellipse "
+   - fit_beam_ellipse_rotation_angle:
+      header: fitBeamEllipseRotAngle
+      units: deg
+      definition: "Rotation angle in degrees (range 0-180) between fit ellipse and beam ellipse "
+   - bkg_sum:
+      header: bkgSum
+      units: Jy/beam 
+      definition: "Background estimator summed over all source pixels (in Jy/beam)."
+   - rms_sum:
+      header: rmsSum
+      units: Jy/beam 
+      definition: "Noise (rms) estimator summed over all source pixels (in Jy/beam)."
+   - chi2:
+      header: chi2
+      definition: "Fit chisquare."
+   - ndf:
+      header: ndf
+      definition: "Fit number of degrees of freedom."
+   - fit_quality:
+      header: fitQuality
+      definition: "Fit quality flag (eBadFit=0,eLQFit=1,eMQFit=2,eHQFit=3)"
+   - fit_component_flag:
+      header: fitComponentFlag
+      definition: "Fitted component flag (eReal=1,eCandidate=2,eFake=3)"
+   - fit_component_type:
+      header: fitComponentType
+      definition: "Fitted component type (eUnknown=0,eCompact=1,ePoint-Like=2,eExtended=3)"
